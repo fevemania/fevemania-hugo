@@ -1,0 +1,17 @@
+{{- $title := .Title -}}
+{{- $siteTitle := .Site.Title -}}
+{{- $authorName := .Site.Author.name -}}
+{{- $sep := ( or .Site.Params.SEO.titleSeparator "•" ) -}}
+{{- if .IsHome -}}
+  {{ $siteTitle }}
+{{- else if eq .Kind "taxonomy" -}}
+  {{ title .Data.Singular }}: {{ $title }} {{ $sep }} {{ $siteTitle }}
+{{- else if or ( eq .Kind "section" ) ( eq .Type "page" ) -}}
+  {{ $title }} {{ $sep }} {{ $siteTitle }}
+{{- else if .IsPage -}}
+  {{- with $authorName -}}
+    {{ $title }} {{ $sep }} {{ . }}
+  {{- else -}}
+    {{ $title }} {{ $sep }} {{ $siteTitle }}
+  {{- end -}}
+{{- end -}}

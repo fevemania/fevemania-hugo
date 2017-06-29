@@ -1,0 +1,16 @@
+<link rel='icon' href='{{ ( or .Site.Params.favicon "favicon.ico" ) | relURL }}'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700&subset=latin'>
+<link rel='stylesheet' href='{{ print "css/" .Site.Data.assets.main.css | relURL }}'>
+{{ range .Site.Params.customCSS }}
+  <link rel='stylesheet' href='{{ . | relURL }}'>
+{{ end }}
+{{ template "_internal/google_analytics_async.html" . }}
+
+<style>
+code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
+</style>
+<link rel="stylesheet" href="css/prism.css"/>
