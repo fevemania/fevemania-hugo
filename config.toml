@@ -35,23 +35,23 @@ Paginate = 5
   facebook = ""
 
 [author]
-  name = "Minimo"
+  name = "fevemania"
 
 [author.social]
-  codepen = "MunifTanjim"
-  facebook = "MunifTanjim"
-  github = "MunifTanjim/minimo"
-  instagram = "instagram"
-  twitter = "MunifTanjim"
+  # codepen = "MunifTanjim"
+  facebook = "fevemania"
+  github = "fevemania/fevemania-hugo"
+  # instagram = "instagram"
+  # twitter = "MunifTanjim"
 
 [permalinks]
   page = "/:slug/"
 
-[[menu.main]]
-  name = "Repo"
-  weight = -70
-  identifier = "repository"
-  url = "https://github.com/MunifTanjim/minimo"
+# [[menu.main]]
+#   name = "Repo"
+#   weight = -70
+#   identifier = "repository"
+#   url = "https://github.com/MunifTanjim/minimo"
 
 # Language Configuration
 defaultContentLanguage = "en"
