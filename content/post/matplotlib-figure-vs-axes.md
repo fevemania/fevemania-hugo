@@ -6,7 +6,7 @@ draft: false
 
 Whenever we need to visualize some image, statistical chart, or even data in python, [Matplotlib](https://matplotlib.org/) the Python 2D plotting library, usually comes into mind.
 
-Though we could just search for someone's code when we need plot some kinds of chart, such as histogram, piechart. However, I thought that there are still a little bit concepts we could learn at the beginning to make us get more sense of this library and make a good tune to our chart whenever we use it.
+Though we could just search for someone's code whenever we need plot some kinds of chart, such as histogram, piechart. However, I believed there are still a little bit concepts we could be familiar with at the beginning of learning Matplotlib library to help get more sense of it and be able to make a good tune to our chart whenever we use it.
 
 The following explanation refer to [These general Concepts](http://matplotlib.org/faq/usage_faq.html#general-concepts).
 
@@ -28,7 +28,7 @@ The following explanation refer to [These general Concepts](http://matplotlib.or
 
 According to hierarchy, there are three common comfusing objects: **figure**, **axes**, and **axis**.
 
-In a nutshell, one `figure `object contains **one or more** `axes` objects,  and one `axes` object contains **at least two** `axis` objects.
+In a nutshell, one `figure` object contains **one or more** `axes` objects,  and one `axes` object contains **at least two** `axis` objects.
 
 Usually,  the axes objects within the figure are used for most plotting actions. 
 
