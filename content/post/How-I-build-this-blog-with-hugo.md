@@ -1,5 +1,5 @@
 ---
-title: "How I Deploy This Blog With Hugo"
+title: "How to Deploy A Hugo Blog onto Github"
 date: 2017-06-30T10:55:49+08:00
 draft: false
 ---

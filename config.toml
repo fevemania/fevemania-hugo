@@ -47,11 +47,11 @@ Paginate = 5
 [permalinks]
   page = "/:slug/"
 
-# [[menu.main]]
-#   name = "Repo"
-#   weight = -70
+[[menu.main]]
+  name = "Home"
+  weight = -70
 #   identifier = "repository"
-#   url = "https://github.com/MunifTanjim/minimo"
+  url = "https://fevemania.github.io/"
 
 # Language Configuration
 defaultContentLanguage = "en"
