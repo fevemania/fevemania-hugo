@@ -17,6 +17,8 @@ Paginate = 5
   hideEntryNavigation = false
   customCSS = ["css/custom.css"]
   customJS = ["js/custom.js"]
+  Author = "fevemania"
+  disqusShortname = "fevemania-github-io"
 
 [params.seo]
   # Title Separator: - – — · • * ⋆ | ~ « » < >
