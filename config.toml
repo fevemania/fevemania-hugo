@@ -64,3 +64,8 @@ defaultContentLanguage = "en"
     lang = "en"
     languageName = "English"
     weight = 1
+
+[sitemap]
+	changefreq = "monthly"
+	priority = 0.5
+	filename = "sitemap.xml"
