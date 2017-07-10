@@ -1,8 +1,9 @@
----
-title: "Contrast Limited Adaptive Histogram Equalization"
-date: 2017-06-28T17:36:07+08:00
-draft: false 
----
++++
+title = "Contrast Limited Adaptive Histogram Equalization"
+date = 2017-06-28T17:36:07+08:00
+draft = false
+tags = ["OpenCV", "Deep Learning"]
++++
 
 今天嘗試寫中文版的Post，接續昨天的Po文，Histograms Equalization 可以用在深度學習中針對圖片資料對比度太低的問題進行預處理 (data prepocessing)。
 

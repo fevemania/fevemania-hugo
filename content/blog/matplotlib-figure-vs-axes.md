@@ -1,8 +1,10 @@
----
-title: "Intro Matplotlib, What is different in Axes and Figure ?"
-date: 2017-06-28T17:44:03+08:00
-draft: false 
----
++++
+title = "Intro Matplotlib, What is different in Axes and Figure ?"
+date = 2017-06-28T17:44:03+08:00
+draft = false
+categories = ["Python Library"]
+tags = ["python", "Matplotlib"]
++++
 
 Whenever we need to visualize some image, statistical chart, or even data in python, [Matplotlib](https://matplotlib.org/) the Python 2D plotting library, usually comes into mind.
 

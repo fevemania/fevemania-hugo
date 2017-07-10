@@ -1,8 +1,9 @@
----
-title: "Global Histogram Equalization"
-date: 2017-06-28T15:08:50+08:00
-draft: false
----
++++
+title = "Global Histogram Equalization"
+date = 2017-06-28T15:08:50+08:00
+draft = false
+tags = ["OpenCV"]
++++
 
 What **Histogram Equalization** does is to improve the contrast of the image.
 

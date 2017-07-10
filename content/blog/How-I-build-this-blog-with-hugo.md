@@ -1,8 +1,9 @@
----
-title: "How to Deploy A Hugo Blog onto Github"
-date: 2017-06-30T10:55:49+08:00
-draft: false
----
++++
+title = "How to Deploy A Hugo Blog onto Github"
+date = 2017-06-30T10:55:49+08:00
+draft = false
+tags = ["Hugo"]
++++
 
 這篇文章留給自己與需要的人作為筆記與參考用。(貼心提示: 請務必先了解Github的操作唷！)
 

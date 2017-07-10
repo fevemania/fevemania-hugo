@@ -8,6 +8,8 @@ disqusShortname = ""
 googleAnalytics = ""
 Paginate = 5
 
+preserveTaxonomyNames = true
+
 [params]
   description = "Minimalist theme for Hugo"
   dateFormat = "2006, Jan 2"
@@ -50,9 +52,9 @@ Paginate = 5
   page = "/:slug/"
 
 [[menu.main]]
-  name = "Home"
+  # name = "Home"
   weight = -70
-#   identifier = "repository"
+  identifier = "repository"
   url = "https://fevemania.github.io/"
 
 # Language Configuration
