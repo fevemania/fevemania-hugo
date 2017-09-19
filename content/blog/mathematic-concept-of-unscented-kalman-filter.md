@@ -1,5 +1,5 @@
 ---
-title: "Mathematic Concept of Unscented Kalman Filter"
+title: "Mathematic Concept of Unscented Kalman Filter with CTRV model"
 date: 2017-09-19T15:38:49+08:00
 draft: true
 ---
@@ -7,11 +7,18 @@ draft: true
 <!-- s Here I put the resource of images -->
 
 [CTRV_state_vector]: img/math_concept_for_ukf/CTRV_state_vector.png
+[Assume_yaw_rate_low]: img/math_concept_for_ukf/assume_yaw_rate_low.png
+[process_noise_vector]: img/math_concept_for_ukf/process_noise_vector.png
+[process_noise_covariance]: img/math_concept_for_ukf/process_noise_covariance.png
+[generate_simga_points]: img/math_concept_for_ukf/generate_simga_points.png
+[predict_simga_points]: img/math_concept_for_ukf/predict_simga_points.png
 
 <!-- align center (display block) : `$$ $$` -->
 <!-- just inline: `$ $` -->
 
-In UKF, we work with a moving object of interest under CTRV  (constant turn rate and velocity magnitude model) nonlinear motion model which assumes the object can move straight, but they can also move with a constant turn rate and a const velocity magnitude.
+### CTRV Model (constant turn rate and velocity magnitude model) 
+---
+Here we work with a moving object of interest under CTRV nonlinear motion model which assumes the object can move straight, but they can also move with a constant turn rate and a const velocity magnitude.
 
 1. The State Vector of CTRV model:  
 
@@ -28,7 +35,7 @@ In UKF, we work with a moving object of interest under CTRV  (constant turn rate
 
 	![CTRV_state_vector][CTRV_state_vector]  
 
-2. Change rate of state :  
+2. Change rate of state:  
 
 	`$
 	  \begin{align}
@@ -42,11 +49,37 @@ In UKF, we work with a moving object of interest under CTRV  (constant turn rate
 	  \end{align}
 	$`
 
-3. Time difference :  `$ \Delta t = t_{k+1} - t_{k} $`
+3. Time difference:&emsp;`$ \Delta t = t_{k+1} - t_{k} $`
 
-4. Process model (predicts the state at time step k+1) :  `$ x_{k+1} = f(x_{k}, \nu_{k}) $`  
+4. Process model (predicts the state at time step k+1):&emsp;  
 
-  * Without consider noise:  
+	`$ 
+			x_{k+1} 
+			\begin{align*}
+			&= f(x_{k}, \nu_{k}) 
+			&= x_{k} + 
+		  \left[ 
+		    \begin{matrix} 
+		      \frac{v{k}}{\psi_{k}} \left( sin(\psi_{k} + \dot{\psi_{k}} \Delta t) - sin(\psi_{k})  \right) \\
+		      \frac{v{k}}{\psi_{k}} \left( -cos(\psi_{k} + \dot{\psi_{k}} \Delta t) + cos(\psi_{k})  \right) \\
+		      0 \\
+		      \dot{\psi_{k}} \Delta t \\
+		      0
+		    \end{matrix}
+		  \right] +
+			\left[ 
+	    \begin{matrix} 
+	      \frac{1}{2} (\Delta t)^2 cos(\psi_{k}) \cdot \nu_{a,k} \\
+	      \frac{1}{2} (\Delta t)^2 sin(\psi_{k}) \cdot \nu_{a,k} \\
+	      \Delta t \cdot \nu_{a,k} \\
+	      \frac{1}{2} (\Delta t)^2 \cdot \nu_{\ddot{\psi}, k} \\
+	      \Delta t \cdot \nu_{\ddot{\psi}, k}
+	    \end{matrix}
+	  	\right]
+			\end{align*}
+	 $`  
+
+  * consider only deterministic part:  
 
 		`$
 		 \begin{align*}
@@ -85,3 +118,55 @@ In UKF, we work with a moving object of interest under CTRV  (constant turn rate
 		  \right]
 		  \end{align*}
 		$`
+
+	* stochastic part (noise vector):&emsp;`$ \nu_{k} = \begin{matrix} [\nu_{a,k} & \nu_{\ddot{\psi}, k}]^T \end{matrix} $`
+		* longitudinal acceleration noise:&emsp;`$ \nu_{a,k} \sim \mathcal{N}(0, \sigma^2_{a}) $`
+		* &emsp;&emsp;&emsp;&nbsp; yaw acceleration noise:&emsp;`$ \nu_{\ddot{\psi}, k} \sim \mathcal{N}(0, \sigma^2_{\ddot{\psi}}) $`
+		
+		* Assume that both longitudinal and yaw acceleration noise are constant between k and k+1 step:  
+
+			(also we assume that the car wre driving prefectly straight, so we could calculate x accelertation and y acceletration accordingly.)  
+			**(this approximation will be okay as long as the yaw rate is not too high!)**
+
+			`$
+			\begin{align*}
+			f(\nu_{k})
+				&= 
+				\left[ 
+		    \begin{matrix} 
+		      \frac{1}{2} (\Delta t)^2 cos(\psi_{k}) \cdot \nu_{a,k} \\
+		      \frac{1}{2} (\Delta t)^2 sin(\psi_{k}) \cdot \nu_{a,k} \\
+		      \Delta t \cdot \nu_{a,k} \\
+		      \frac{1}{2} (\Delta t)^2 \cdot \nu_{\ddot{\psi}, k} \\
+		      \Delta t \cdot \nu_{\ddot{\psi}, k}
+		    \end{matrix}
+		  	\right]
+			\end{align*}
+			$`  
+
+			![Assume_yaw_rate_low][Assume_yaw_rate_low]
+
+### UKF (Unscented Kalman Filter)
+---
+What makes UKF and EKF (Extended Kalman Filter) different is the method they uses to tackle with non-linear motion model.  
+
+* EKF uses the Jacobian matrix to linearize to non-linear functions.
+* UKF takes representative points of the whole distribution called **simga points** from a Gaussian distribution, and put them into the non-linear function which is called **unscented transformation**. And it will come out the **correspond simga points** in the predicted or measurement state space. Then we can calculate the mean vector and covariance matrix from these correspond simga points to get the Gaussian distribution of the predicted or measurement state space.
+
+We can split the unscented prediction into three parts.
+1. generate simga points.
+2. insert them into the process function to do predict.
+3. calculate the mean and covariance from the predicted sigma points.
+
+#### Generate Simga points
+With CTRV model, we have state dimension `$ n_{x} = 5 $`. However, we should also consider the process noise vector which has two-dimension cause it also has a non-linear effect. `$ n_{aug} = 5+2 = 7 $`. We will choose `$ 2 n_{aug} + 1 $` sigma points. 
+
+![process_noise_vector][process_noise_vector] ![process_noise_covariance][process_noise_covariance]
+
+![generate_simga_points][generate_simga_points]
+
+#### Prediction Step
+We simply insert every sigma point into the process model of CTRV.
+
+![predict_simga_points][predict_simga_points]
+
