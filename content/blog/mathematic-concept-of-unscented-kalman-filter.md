@@ -1,7 +1,7 @@
 ---
 title: "Mathematic Concept of Unscented Kalman Filter with CTRV model"
 date: 2017-09-19T15:38:49+08:00
-draft: true
+draft: false
 ---
 
 <!-- s Here I put the resource of images -->
@@ -12,6 +12,7 @@ draft: true
 [process_noise_covariance]: img/math_concept_for_ukf/process_noise_covariance.png
 [generate_simga_points]: img/math_concept_for_ukf/generate_simga_points.png
 [predict_simga_points]: img/math_concept_for_ukf/predict_simga_points.png
+[calculate_mean_and_covariance_from_predict_sigma_points]: img/math_concept_for_ukf/calculate_mean_and_covariance_from_predict_sigma_points.png
 
 <!-- align center (display block) : `$$ $$` -->
 <!-- just inline: `$ $` -->
@@ -60,8 +61,8 @@ Here we work with a moving object of interest under CTRV nonlinear motion model 
 			&= x_{k} + 
 		  \left[ 
 		    \begin{matrix} 
-		      \frac{v{k}}{\psi_{k}} \left( sin(\psi_{k} + \dot{\psi_{k}} \Delta t) - sin(\psi_{k})  \right) \\
-		      \frac{v{k}}{\psi_{k}} \left( -cos(\psi_{k} + \dot{\psi_{k}} \Delta t) + cos(\psi_{k})  \right) \\
+		      \frac{v_{k}}{\dot{\psi_{k}}} \left( sin(\psi_{k} + \dot{\psi_{k}} \Delta t) - sin(\psi_{k})  \right) \\
+		      \frac{v_{k}}{\dot{\psi_{k}}} \left( -cos(\psi_{k} + \dot{\psi_{k}} \Delta t) + cos(\psi_{k})  \right) \\
 		      0 \\
 		      \dot{\psi_{k}} \Delta t \\
 		      0
@@ -79,6 +80,34 @@ Here we work with a moving object of interest under CTRV nonlinear motion model 
 			\end{align*}
 	 $`  
 
+	**Note: We should be careful when `${\dot{\psi_{k}}}$ = 0`, to avoid divison by 0**  
+	(This is at the situation when the yaw angle is not change, the car is going straight)
+
+	**if `${\dot{\psi_{k}}}$` is zero  
+	`$
+		x_{k+1} 
+			\begin{align*}
+			&= x_{k} + 
+		  \left[ 
+		    \begin{matrix} 
+		      {v_{k}} cos(\psi_{k}) \Delta t \\
+		      {v_{k}} sin(\psi_{k}) \Delta t \\
+		      0 \\
+		      \dot{\psi_{k}} \Delta t \\
+		      0
+		    \end{matrix}
+		  \right] +
+			\left[ 
+	    \begin{matrix} 
+	      \frac{1}{2} (\Delta t)^2 cos(\psi_{k}) \cdot \nu_{a,k} \\
+	      \frac{1}{2} (\Delta t)^2 sin(\psi_{k}) \cdot \nu_{a,k} \\
+	      \Delta t \cdot \nu_{a,k} \\
+	      \frac{1}{2} (\Delta t)^2 \cdot \nu_{\ddot{\psi}, k} \\
+	      \Delta t \cdot \nu_{\ddot{\psi}, k}
+	    \end{matrix}
+	  	\right]
+			\end{align*}
+	$`**
   * consider only deterministic part:  
 
 		`$
@@ -109,8 +138,8 @@ Here we work with a moving object of interest under CTRV nonlinear motion model 
 		  &= x_{k} + 
 		  \left[ 
 		    \begin{matrix} 
-		      \frac{v{k}}{\psi_{k}} \left( sin(\psi_{k} + \dot{\psi_{k}} \Delta t) - sin(\psi_{k})  \right) \\
-		      \frac{v{k}}{\psi_{k}} \left( -cos(\psi_{k} + \dot{\psi_{k}} \Delta t) + cos(\psi_{k})  \right) \\
+		      \frac{v{k}}{\dot{\psi_{k}}} \left( sin(\psi_{k} + \dot{\psi_{k}} \Delta t) - sin(\psi_{k})  \right) \\
+		      \frac{v{k}}{\dot{\psi_{k}}} \left( -cos(\psi_{k} + \dot{\psi_{k}} \Delta t) + cos(\psi_{k})  \right) \\
 		      0 \\
 		      \dot{\psi_{k}} \Delta t \\
 		      0
@@ -158,7 +187,7 @@ We can split the unscented prediction into three parts.
 2. insert them into the process function to do predict.
 3. calculate the mean and covariance from the predicted sigma points.
 
-#### Generate Simga points
+#### Generate Simga Points
 With CTRV model, we have state dimension `$ n_{x} = 5 $`. However, we should also consider the process noise vector which has two-dimension cause it also has a non-linear effect. `$ n_{aug} = 5+2 = 7 $`. We will choose `$ 2 n_{aug} + 1 $` sigma points. 
 
 ![process_noise_vector][process_noise_vector] ![process_noise_covariance][process_noise_covariance]
@@ -170,3 +199,15 @@ We simply insert every sigma point into the process model of CTRV.
 
 ![predict_simga_points][predict_simga_points]
 
+#### Calculate Mean and Covraiance from the Predicted Sigma Points
+When generate simag points, we use lambda to get spreading value from mean.
+Now we consider to do the inverse calculation. (There are several ways to calculate weights, we just stick to this one.)
+
+* Weights:
+
+	`$ \omega_{i} = \frac{\lambda}{ \lambda+n_{aug} } $`&emsp;,&emsp; `$i = 0$`  
+	`$ \omega_{i} = \frac{1}{ 2(\lambda+n_{aug}) } $`&emsp;,&emsp; `$i = 1 ... 2*n_{aug}$`
+
+![calculate_mean_and_covariance_from_predict_sigma_points][calculate_mean_and_covariance_from_predict_sigma_points]
+
+**Note: There is an error in picture above, the predicted mean formula should be&emsp;`$ x_{k+1|k} = \Sigma_{i=0}^{2n_{aug}} \omega_{i} \cdot \chi_{k+1|k,i} = 0 $`**  
