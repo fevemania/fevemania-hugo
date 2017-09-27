@@ -1,5 +1,5 @@
 +++
-title = "Mathematic Concept of Unscented Kalman Filter with CTRV model"
+title = "Mathematic Formula Note of Unscented Kalman Filter with CTRV model"
 date = 2017-09-19T15:38:49+08:00
 draft = false
 +++
@@ -16,13 +16,14 @@ draft = false
 [measurement_model]: img/math_concept_for_ukf/measurement_model.png
 [measurement_sigma_points]: img/math_concept_for_ukf/measurement_sigma_points.png
 [calculate_mean_and_covariance_from_measuremnt_sigma_points]: img/math_concept_for_ukf/calculate_mean_and_covariance_from_measuremnt_sigma_points.png
+[measurement_update]: img/math_concept_for_ukf/measurement_update.png
 
 [Self_Driving_Nanodegree_url]: https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013
 
 <!-- align center (display block) : `$$ $$` -->
 <!-- just inline: `$ $` -->
 
-### CTRV Model (constant turn rate and velocity magnitude model) 
+## CTRV Model (constant turn rate and velocity magnitude model) 
 ---
 Here we work with a moving object of interest under CTRV nonlinear motion model which assumes the object can move straight, but they can also move with a constant turn rate and a const velocity magnitude.
 
@@ -185,22 +186,22 @@ Here we work with a moving object of interest under CTRV nonlinear motion model 
 			&emsp;&emsp;the picture above is from Udacity [Self-Driving Nanodegree][Self_Driving_Nanodegree_url] project under CC BY-NC-ND 4.0.
 
 
-### UKF (Unscented Kalman Filter)
+## UKF (Unscented Kalman Filter)
 ---
 What makes UKF and EKF (Extended Kalman Filter) different is the method they uses to tackle with non-linear motion model and measurement model.  
 
 * EKF uses the Jacobian matrix to linearize to non-linear functions.
-* UKF takes representative points of the whole distribution called **simga points** from a Gaussian distribution, and put them into the non-linear function which is called **unscented transformation**. And it will come out the **correspond simga points** in the predicted or measurement state space. Then we can calculate the mean vector and covariance matrix from these correspond simga points to get the Gaussian distribution of the predicted or measurement state space.
+* UKF takes representative points of the whole distribution called **simga points** from a Gaussian distribution, and put them into the non-linear function which is called **unscented transformation**. And it will come out the **corresponded simga points** in the predicted or measurement state space. Then we can calculate the mean vector and covariance matrix from these corresponded simga points to get the Gaussian distribution of the predicted or measurement state space.
 
-We can split the unscented prediction into three parts.
-1. generate simga points.
+We can split the unscented prediction stage into three parts.
+1. generate simga points from the last updated state and covariance matrix.
 2. insert them into the process function or measurement function to do unscented transformation.
-3. calculate the mean and covariance from the predicted or measurement sigma points.
+3. calculate the predicted mean and covariance matrix from the predicted or measurement sigma points.
 
 ### Prediction Stage
 
-#### Generate Simga Points
-With CTRV model, we have state dimension `$ n_{x} = 5 $`. However, we should also consider the process noise vector, which has two-dimension, because it also has a non-linear effect. `$ n_{aug} = 5+2 = 7 $`. We will choose `$ 2 n_{aug} + 1 $` sigma points. 
+##### 1. Generate Simga Points
+At the first step of prediction stage, we generate simga points from the last updated state and covariance matrix. With CTRV model, we have state dimension `$ n_{x} = 5 $`. However, we should also consider the process noise vector, which has two-dimension, because it also has a non-linear effect. `$ n_{aug} = 5+2 = 7 $`. We will choose `$ 2 n_{aug} + 1 $` sigma points. 
 
 ![process_noise_vector][process_noise_vector]  
 &emsp;&emsp;&emsp;&emsp;&emsp;the picture above is from Udacity [Self-Driving Nanodegree][Self_Driving_Nanodegree_url] project under CC BY-NC-ND 4.0.
@@ -211,15 +212,15 @@ With CTRV model, we have state dimension `$ n_{x} = 5 $`. However, we should als
 ![generate_simga_points][generate_simga_points]
 &emsp;&emsp;&emsp;&emsp;&emsp;the picture above is from Udacity [Self-Driving Nanodegree][Self_Driving_Nanodegree_url] project under CC BY-NC-ND 4.0.
 
-#### Prediction Step
-We simply insert every sigma point into the process model of CTRV.
+##### 2. Prediction Step
+In second step, we simply insert every sigma point into the process model of CTRV to get the prdicted simga points.
 
 ![predict_simga_points][predict_simga_points]
 &emsp;&emsp;&emsp;&emsp;&emsp;the picture above is from Udacity [Self-Driving Nanodegree][Self_Driving_Nanodegree_url] project under CC BY-NC-ND 4.0.
 
-#### Calculate Mean and Covraiance from the Predicted Sigma Points
-When generate simag points, we use lambda to get spreading value from mean.
-Now we consider to do the inverse calculation. (There are several ways to calculate weights, we just stick to this one.)
+##### 3. Calculate Mean and Covariance from the Predicted Sigma Points
+In this step, we calculate predicted state mean vector and predicted state covariance matrix from the predicted sigma points. When generate simga points, we use lambda to get spreading value from mean.
+Now we consider to do the inverse calculation. (There are several ways to calculate weights, we just stick to the following one.)
 
 * Weights:
 
@@ -232,6 +233,9 @@ Now we consider to do the inverse calculation. (There are several ways to calcul
 **Note: There is an error in picture above, the predicted mean formula should be&emsp;`$ x_{k+1|k} = \Sigma_{i=0}^{2n_{aug}} \omega_{i} \cdot \chi_{k+1|k,i} $`**  
 
 ### Measurement Stage -- Take Radar sensor data for instance
+
+##### 1. Generate Measurement Simga Points and Calculate Its Mean and Covariance.
+
 Like what we do in Prediction Stage, measurement model is also non-linear that we need to put several sigma points into measurement function. But here we could have two shortcut.  
 
 * First, we could directly put the predicted sigma points generated from Prediction Step into the measurement model.  
@@ -250,3 +254,8 @@ Like what we do in Prediction Stage, measurement model is also non-linear that w
 
 
 **Note: There is also an error in predicted measurement mean formula, the predicted mean formula should be&emsp;`$ z_{k+1|k} = \Sigma_{i=0}^{2n_{aug}} \omega_{i} \cdot Z_{k+1|k,i} $`**  
+
+##### 2. Update the State and Covariance Matrix with Radar Data
+
+![measurement_update][measurement_update]
+&emsp;&emsp;&emsp;&emsp;&emsp;the picture above is from Udacity [Self-Driving Nanodegree][Self_Driving_Nanodegree_url] project under CC BY-NC-ND 4.0.
